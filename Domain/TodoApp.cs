@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TodoAppLogic
+namespace Domain
 {
     public class TodoApp
     {

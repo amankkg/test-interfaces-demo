@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
-using TodoAppLogic;
+using Domain;
 
-namespace TodoCLI
+namespace CLI
 {
     class MemoryInputOutput : IInputOutput
     {
         private readonly List<string> Inputs;
-        public IList<string> Outputs { get; private set; }
         private int current = 0;
 
         public MemoryInputOutput(IEnumerable<string> inputs)
         {
-            Outputs = new List<string>();
             Inputs = new List<string>();
 
             Inputs.AddRange(inputs);
@@ -20,11 +18,6 @@ namespace TodoCLI
         public string Read()
         {
             return Inputs[current++];
-        }
-
-        public void Write(string text)
-        {
-            Outputs.Add(text);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
-using TodoAppLogic;
+using Domain;
 
-namespace TodoCLI
+namespace CLI
 {
     class ConsoleInputOutput : IInputOutput
     {
