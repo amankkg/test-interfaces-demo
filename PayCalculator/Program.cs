@@ -1,59 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PayCalculator
 {
     class Program
     {
-        // Сотрудник у которого есть ставка по часам может работать сверхурочно
-        // В случае сверхурочных часов - расчет идет по увеличенной ставке
+        static List<Employee> employees = new List<Employee>();
+        static List<Clerk> clerks = new List<Clerk>();
+
         static void Main(string[] args)
         {
-            var regularSalary = new SalaryRate(7, 12);
-            var chiefSalary = new SalaryRate(12, 15);
+            Initialize();
 
-            var regularEmployee = new Employee(regularSalary);
-            var ceo = new Employee(chiefSalary, 10);
-
-            Console.WriteLine("Regular day, 12 hours worked");
-            Console.WriteLine("Employee earned " + regularEmployee.Earned(12)); // сумма в $
-            Console.WriteLine("CEO earned " + ceo.Earned(12)); // сумма в $
-
-            Console.WriteLine("Holiday, 5 hours worked");
-            Console.WriteLine("Employee earned " + regularEmployee.Earned(5, true));
-            Console.WriteLine("CEO earned " + ceo.Earned(5, true));
-        }
-    }
-
-    class Employee
-    {
-        readonly SalaryRate Rate;
-        readonly int WorkdayLength;
-
-        public Employee(SalaryRate rate, int workdayLength = 8)
-        {
-            Rate = rate;
-            WorkdayLength = workdayLength;
+            WorkDay(clerks, 12);
+            Report();
+            WorkDay(employees, 5, true);
+            Report();
         }
 
-        public int Earned(int factualHours, bool isHoliday = false)
+        static void Initialize()
         {
-            var workdayLength = isHoliday ? 0 : WorkdayLength;
-            var baseSalary = Rate.Base * Math.Min(factualHours, workdayLength);
-            var extraSalary = Rate.Extra * Math.Max(0, factualHours - workdayLength);
+            var clerk1 = new Clerk();
+            var clerk2 = new Clerk();
 
-            return baseSalary + extraSalary;
+            employees.AddRange(new Employee[] {
+                clerk1,
+                clerk2,
+                new Ceo()
+            });
+
+            clerks.Add(clerk1);
+            clerks.Add(clerk2);
         }
-    }
 
-    struct SalaryRate
-    {
-        public int Base { get; }
-        public int Extra { get; }
-
-        public SalaryRate(int @base, int extra)
+        static void WorkDay(IEnumerable<Employee> workingEmployees, int hours, bool isHoliday = false)
         {
-            Base = @base;
-            Extra = extra;
+            Console.WriteLine($"\nWorked {hours} hour(s). Is holiday ? {isHoliday}");
+
+            foreach (var employee in workingEmployees)
+            {
+                employee.Worked(hours, isHoliday);
+            }
+        }
+
+        static void Report()
+        {
+            Console.WriteLine("\nSalary Report\n");
+
+            foreach (var employee in employees)
+            {
+                Console.WriteLine($"\t{employee.Position}\tearned ${employee.Earned}");
+            }
         }
     }
 }
