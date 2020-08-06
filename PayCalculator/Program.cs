@@ -6,37 +6,54 @@ namespace PayCalculator
     {
         // Сотрудник у которого есть ставка по часам может работать сверхурочно
         // В случае сверхурочных часов - расчет идет по увеличенной ставке
-        const int BASE_RATE = 5; // $ в час
-        const int BASE_RATE_2 = 7; // $ в час
-        
-        const int EXTRA_RATE = 10; // $ в час
-        const int EXTRA_RATE_2 = 12; // $ в час
-        
-        const int WORKING_DAY_HOURS = 8; // regular workday
-        const int SHORT_DAY_HOURS = 4; // short workday
-
         static void Main(string[] args)
         {
-            var workedHours = 12;
+            var regularSalary = new SalaryRate(7, 12);
+            var chiefSalary = new SalaryRate(12, 15);
 
-            Console.WriteLine(EmployeeWorked(workedHours)); // сумма в $
-            Console.WriteLine(Employee2Worked(workedHours)); // сумма в $
+            var regularEmployee = new Employee(regularSalary);
+            var ceo = new Employee(chiefSalary, 10);
+
+            Console.WriteLine("Regular day, 12 hours worked");
+            Console.WriteLine("Employee earned " + regularEmployee.Earned(12)); // сумма в $
+            Console.WriteLine("CEO earned " + ceo.Earned(12)); // сумма в $
+
+            Console.WriteLine("Holiday, 5 hours worked");
+            Console.WriteLine("Employee earned " + regularEmployee.Earned(5, true));
+            Console.WriteLine("CEO earned " + ceo.Earned(5, true));
+        }
+    }
+
+    class Employee
+    {
+        readonly SalaryRate Rate;
+        readonly int WorkdayLength;
+
+        public Employee(SalaryRate rate, int workdayLength = 8)
+        {
+            Rate = rate;
+            WorkdayLength = workdayLength;
         }
 
-        static decimal EmployeeWorked(int hours)
+        public int Earned(int factualHours, bool isHoliday = false)
         {
-            var baseSalary = BASE_RATE * Math.Min(hours, WORKING_DAY_HOURS);
-            var extraSalary = EXTRA_RATE * Math.Max(0, hours - WORKING_DAY_HOURS);
+            var workdayLength = isHoliday ? 0 : WorkdayLength;
+            var baseSalary = Rate.Base * Math.Min(factualHours, workdayLength);
+            var extraSalary = Rate.Extra * Math.Max(0, factualHours - workdayLength);
 
             return baseSalary + extraSalary;
         }
+    }
 
-        static decimal Employee2Worked(int hours)
+    struct SalaryRate
+    {
+        public int Base { get; }
+        public int Extra { get; }
+
+        public SalaryRate(int @base, int extra)
         {
-            var baseSalary = BASE_RATE_2 * Math.Min(hours, WORKING_DAY_HOURS);
-            var extraSalary = EXTRA_RATE_2 * Math.Max(0, hours - WORKING_DAY_HOURS);
-
-            return baseSalary + extraSalary;
+            Base = @base;
+            Extra = extra;
         }
     }
 }
