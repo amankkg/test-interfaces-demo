@@ -12,7 +12,7 @@ namespace PayCalculator
         {
             Initialize();
 
-            WorkDay(clerks, 12);
+            WorkDay(clerks, -20);
             Report();
             WorkDay(employees, 5, true);
             Report();
